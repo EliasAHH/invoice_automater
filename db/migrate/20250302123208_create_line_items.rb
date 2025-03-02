@@ -5,7 +5,7 @@ class CreateLineItems < ActiveRecord::Migration[7.0]
       t.string :description, null: false
       t.decimal :quantity, null: false, precision: 10, scale: 2
       t.decimal :unit_price, null: false, precision: 10, scale: 2
-      t.decimal :total_amount, null: false, precision: 10, scale: 2
+      t.decimal :total, null: false, precision: 10, scale: 2
 
       t.timestamps
     end
