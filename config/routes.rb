@@ -4,8 +4,13 @@ Rails.application.routes.draw do
   resources :create_invoices
 
   namespace :api do
-    resources :line_items, only: [:create, :update, :destroy]
-  end 
+    namespace :v1 do
+      resources :invoices do
+        resources :line_items, shallow: true
+      end
+      devise_for :users
+    end
+  end
   # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
 
   # Defines the root path route ("/")

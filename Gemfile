@@ -74,3 +74,6 @@ group :test do
   gem "selenium-webdriver"
 
 end
+
+# Add CORS support for API
+gem 'rack-cors'

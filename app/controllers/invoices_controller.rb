@@ -1,2 +1,0 @@
-class CreateInvoicesController < ApplicationController
-end

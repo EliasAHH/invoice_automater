@@ -7,9 +7,11 @@
     <%= csp_meta_tag %>
 
     <%= stylesheet_link_tag "application", "data-turbo-track": "reload" %>
+    <script type="module" src="../frontend/src/components/invoice-list.js"></script>
   </head>
 
   <body>
+    <invoice-list></invoice-list>
     <%= yield %>
   </body>
 </html>
