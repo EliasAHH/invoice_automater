@@ -19,12 +19,11 @@ module InvoiceAutomater
     # config.time_zone = "Central Time (US & Canada)"
     # config.eager_load_paths << Rails.root.join("extras")
 
-
     config.api_only = true
     
     config.middleware.insert_before 0, Rack::Cors do
       allow do
-        origins '*'  
+        origins 'http://localhost:5173' # Vite's default port
         resource '*',
           headers: :any,
           methods: [:get, :post, :put, :patch, :delete, :options, :head]

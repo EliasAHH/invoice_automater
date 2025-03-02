@@ -28,7 +28,9 @@ class Invoice < ApplicationRecord
 
     def set_invoice_number
         last_number = Invoice.maximum(:invoice_number) || "INV-000000"
-        invoice_number =  "INV-#{(last_number.split('-).to_last_i + 1').to_s.rjust(6,0))}"
+        last_sequence = last_number.split('-').last.to_i
+        next_sequence = (last_sequence + 1).to_s.rjust(6, '0')
+        invoice_number = "INV-#{next_sequence}"
     end 
 
 

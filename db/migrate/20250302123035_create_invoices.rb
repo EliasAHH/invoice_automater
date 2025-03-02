@@ -13,6 +13,5 @@ class CreateInvoices < ActiveRecord::Migration[7.0]
       t.text :notes
       t.timestamps
     end
-    add_index :invoices, :invoice_number, unique: true
   end
 end

@@ -15,28 +15,28 @@ ActiveRecord::Schema[7.0].define(version: 2025_03_02_123208) do
   enable_extension "plpgsql"
 
   create_table "customers", force: :cascade do |t|
-    t.string "name"
+    t.string "name", null: false
     t.string "email"
     t.string "phone"
-    t.string "address"
-    t.string "company_name"
-    t.string "tax_number"
+    t.string "notes"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
   end
 
   create_table "invoices", force: :cascade do |t|
     t.bigint "customer_id", null: false
-    t.bigint "user_id", null: false
     t.string "invoice_number", null: false
-    t.decimal "amount", precision: 10, scale: 2, default: "0.0"
+    t.decimal "subtotal", precision: 10, scale: 2, default: "0.0"
+    t.decimal "tax", precision: 10, scale: 2, default: "0.0"
+    t.decimal "total", precision: 10, scale: 2, default: "0.0"
+    t.boolean "paid", default: false
+    t.date "date", null: false
     t.date "due_date"
     t.integer "status", default: 0
-    t.datetime "sent_at"
-    t.datetime "paid_at"
     t.text "notes"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["customer_id"], name: "index_invoices_on_customer_id"
-    t.index ["user_id"], name: "index_invoices_on_user_id"
   end
 
   create_table "line_items", force: :cascade do |t|
@@ -44,7 +44,7 @@ ActiveRecord::Schema[7.0].define(version: 2025_03_02_123208) do
     t.string "description", null: false
     t.decimal "quantity", precision: 10, scale: 2, null: false
     t.decimal "unit_price", precision: 10, scale: 2, null: false
-    t.decimal "total_amount", precision: 10, scale: 2, null: false
+    t.decimal "total", precision: 10, scale: 2, null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["invoice_id"], name: "index_line_items_on_invoice_id"
@@ -63,6 +63,5 @@ ActiveRecord::Schema[7.0].define(version: 2025_03_02_123208) do
   end
 
   add_foreign_key "invoices", "customers"
-  add_foreign_key "invoices", "users"
   add_foreign_key "line_items", "invoices"
 end
