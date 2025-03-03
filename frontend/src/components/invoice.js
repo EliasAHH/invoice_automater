@@ -12,6 +12,7 @@ class Invoice extends LitElement {
         this.view = 'list';
     }
 
+
     render() {
         return html `
         <div class="invoice-app">

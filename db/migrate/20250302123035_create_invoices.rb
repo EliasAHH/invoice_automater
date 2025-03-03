@@ -3,9 +3,9 @@ class CreateInvoices < ActiveRecord::Migration[7.0]
     create_table :invoices do |t|
       t.references :customer, null: false, foreign_key: true
       t.string :invoice_number, null: false
-      t.decimal :subtotal, precision: 10, scale: 2, default: 0
-      t.decimal :tax, precision: 10, scale: 2, default: 0
-      t.decimal :total, precision: 10, scale: 2, default: 0
+      t.float :subtotal, precision: 10, scale: 2, default: 0
+      t.float :tax, precision: 10, scale: 2, default: 0
+      t.float :total, precision: 10, scale: 2, default: 0
       t.boolean :paid, default: false
       t.date :date, null: false
       t.date :due_date

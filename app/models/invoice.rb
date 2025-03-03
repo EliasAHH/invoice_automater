@@ -1,6 +1,5 @@
 class Invoice < ApplicationRecord
     belongs_to :customer
-    belongs_to :user
     has_many :line_items, dependent: :destroy
     accepts_nested_attributes_for :line_items, allow_destroy: true
 
@@ -19,10 +18,10 @@ class Invoice < ApplicationRecord
 
 
     def calculate_total
-        subtotal = line_items.sum { |item| item.quantity * item.unit_price }
-        tax = subtotal * 0.08 
-        total = subtotal + tax
+        self.subtotal = line_items.sum { |item| item.quantity * item.unit_price }
+        self.total = (self.tax == 0.0 ? 1.08 : self.tax) * subtotal
     end 
+
 
     private 
 
@@ -30,7 +29,7 @@ class Invoice < ApplicationRecord
         last_number = Invoice.maximum(:invoice_number) || "INV-000000"
         last_sequence = last_number.split('-').last.to_i
         next_sequence = (last_sequence + 1).to_s.rjust(6, '0')
-        invoice_number = "INV-#{next_sequence}"
+        self.invoice_number = "INV-#{next_sequence}"
     end 
 
 

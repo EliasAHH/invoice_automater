@@ -1,2 +1,2 @@
-import './styles.css'
-import './components/invoice.js' 
+import './shared/tailwind.global.css'
+import './components/invoice-app.js' 

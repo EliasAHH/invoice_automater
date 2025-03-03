@@ -1,6 +1,7 @@
-import { LitElement, html } from 'lit';
+import { html } from 'lit';
+import { TailwindElement } from '../shared/tailwind.element';
 
-class InvoiceForm extends LitElement {
+class InvoiceForm extends TailwindElement() {
   static get properties() {
     return {
       invoice: { type: Object },

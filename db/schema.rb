@@ -26,9 +26,9 @@ ActiveRecord::Schema[7.0].define(version: 2025_03_02_123208) do
   create_table "invoices", force: :cascade do |t|
     t.bigint "customer_id", null: false
     t.string "invoice_number", null: false
-    t.decimal "subtotal", precision: 10, scale: 2, default: "0.0"
-    t.decimal "tax", precision: 10, scale: 2, default: "0.0"
-    t.decimal "total", precision: 10, scale: 2, default: "0.0"
+    t.float "subtotal", default: 0.0
+    t.float "tax", default: 0.0
+    t.float "total", default: 0.0
     t.boolean "paid", default: false
     t.date "date", null: false
     t.date "due_date"
@@ -42,9 +42,9 @@ ActiveRecord::Schema[7.0].define(version: 2025_03_02_123208) do
   create_table "line_items", force: :cascade do |t|
     t.bigint "invoice_id", null: false
     t.string "description", null: false
-    t.decimal "quantity", precision: 10, scale: 2, null: false
-    t.decimal "unit_price", precision: 10, scale: 2, null: false
-    t.decimal "total", precision: 10, scale: 2, null: false
+    t.float "quantity", null: false
+    t.float "unit_price", null: false
+    t.float "total", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["invoice_id"], name: "index_line_items_on_invoice_id"

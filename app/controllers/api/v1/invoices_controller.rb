@@ -3,20 +3,22 @@ module Api
     class InvoicesController < ApplicationController
         def index
             @invoices = Invoice.all
-            render json: @invoices
+            render json: {invoices: @invoices, line_items: @invoices.line_items}
         end 
 
         def create
             ActiveRecord::Base.transaction do
                 @customer = Customer.find_or_create_by!(name: params[:invoice][:customer_name])
                 
-                processed_params = process_line_items(invoice_params)
-                @invoice = @customer.invoices.build(processed_params)
+
+                @invoice = @customer.invoices.build(
+                    date: params[:invoice][:date],
+                    line_items_attributes: process_line_items
+                )
                 
                 if @invoice.save
                     render json: @invoice, status: :created
                 else 
-                    binding.break
                     render json: @invoice.errors, status: :unprocessable_entity
                 end
             end
@@ -33,14 +35,14 @@ module Api
             )
         end 
 
-        def process_line_items(params)
-            return params unless params[:line_items_attributes]
-
-            params[:line_items_attributes].each do |item|
-                item[:quantity] = item[:quantity].to_i
-                item[:unit_price] = item[:unit_price].to_d
+        def process_line_items
+           params[:invoice][:line_items].map do |item|
+                {
+                        description: item[:description],
+                        quantity: item[:quantity].to_s.to_i,
+                        unit_price: item[:unit_price].to_s.to_f
+                }
             end
-            params
         end
     end
   end

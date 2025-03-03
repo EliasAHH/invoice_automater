@@ -18,7 +18,7 @@ module Api
       private
 
       def line_item_params
-        params.require(:line_item).permit(:invoice_id, :description, :quantity, :price)
+        params.require(:line_item).permit(:invoice_id, :description, :quantity, :unit_price)
       end
     end
   end
