@@ -20,16 +20,19 @@ class InvoiceList extends TailwindElement() {
     
     // Bind the method to this instance
     this.handleStatusUpdate = this.handleStatusUpdate.bind(this);
+    this.handleLineItemDeleted = this.handleLineItemDeleted.bind(this);
   }
 
   connectedCallback() {
     super.connectedCallback();
     this.addEventListener('status-updated', this.handleStatusUpdate);
+    this.addEventListener('line-item-deleted', this.handleLineItemDeleted);
   }
 
   disconnectedCallback() {
     super.disconnectedCallback();
     this.removeEventListener('status-updated', this.handleStatusUpdate);
+    this.removeEventListener('line-item-deleted', this.handleLineItemDeleted);
   }
 
   handleStatusUpdate(e) {
@@ -42,6 +45,14 @@ class InvoiceList extends TailwindElement() {
     );
     
     // Dispatch event to parent for global refresh
+    this.dispatchEvent(new CustomEvent('invoice-updated', {
+      bubbles: true,
+      composed: true
+    }));
+  }
+
+  handleLineItemDeleted() {
+    // Trigger a refresh of the invoice list
     this.dispatchEvent(new CustomEvent('invoice-updated', {
       bubbles: true,
       composed: true

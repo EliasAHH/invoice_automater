@@ -15,10 +15,16 @@ module Api
         end
       end
 
+      def destroy
+          @line_item = LineItem.find(params[:id])
+          @line_item.destroy
+          render json: { message: 'Line item deleted successfully' }, status: :ok
+      end 
+
       private
 
       def line_item_params
-        params.require(:line_item).permit(:invoice_id, :description, :quantity, :unit_price)
+        params.require(:line_item).permit(:id,:invoice_id, :description, :quantity, :unit_price)
       end
     end
   end

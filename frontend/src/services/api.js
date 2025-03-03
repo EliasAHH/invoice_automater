@@ -41,5 +41,18 @@ export const InvoiceService = {
             body: JSON.stringify({ invoice })
         });
         return response.json();
+    },
+
+    async deleteLineItem(id) {
+        const response = await fetch(`${BASE_URL}/line_items/${id}`, {
+            method: 'DELETE',
+            headers: {
+                'Content-Type': 'application/json',
+            }
+        });
+        if (!response.ok) {
+            throw new Error('Failed to delete line item');
+        }
+        return response.json();
     }
 }; 

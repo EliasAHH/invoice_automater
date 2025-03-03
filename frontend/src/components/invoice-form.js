@@ -15,6 +15,7 @@ class InvoiceForm extends TailwindElement() {
     this.invoice = {
       customer_name: '',
       date: new Date().toISOString().split('T')[0],
+      notes: '',
       line_items: [this.createEmptyLineItem()]
     };
     this.isEditing = false;
@@ -25,7 +26,7 @@ class InvoiceForm extends TailwindElement() {
     return {
       description: '',
       quantity: 1,
-      Price: 0
+      unit_price: 0
     };
   }
 
@@ -150,6 +151,20 @@ class InvoiceForm extends TailwindElement() {
   removeLineItem(index) {
     const lineItems = this.invoice.line_items.filter((_, i) => i !== index);
     this.updateInvoice('line_items', lineItems);
+  }
+
+  cancel() {
+    this.invoice = {
+      customer_name: '',
+      date: new Date().toISOString().split('T')[0],
+      notes: '',
+      line_items: [this.createEmptyLineItem()]
+    };
+
+    this.dispatchEvent(new CustomEvent('cancel-form', {
+      bubbles: true,
+      composed: true
+    }));
   }
 
   async handleSubmit(e) {

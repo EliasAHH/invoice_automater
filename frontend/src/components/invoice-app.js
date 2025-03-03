@@ -80,7 +80,10 @@ class InvoiceApp extends TailwindElement() {
                     .invoices="${this.invoices || []}"
                     @invoice-updated=${() => this.handleInvoiceUpdate()}
                   ></invoice-list>`
-                : html`<invoice-form @save-invoice=${this.handleSave}></invoice-form>`
+                : html`<invoice-form 
+                    @save-invoice=${this.handleSave}
+                    @cancel-form=${() => this.view = 'list'}
+                  ></invoice-form>`
             }
         `;
     }

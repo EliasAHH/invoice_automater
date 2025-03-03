@@ -47,6 +47,30 @@ class InvoiceDetails extends TailwindElement() {
     }
   }
 
+  async deleteLineItem(itemId) {
+    try {
+      this.loading = true;
+      await InvoiceService.deleteLineItem(itemId);
+      
+      // Remove the item from the local state
+      this.invoice = this.invoice.filter(item => item.id !== itemId);
+      
+      // Notify parent components that data has changed
+      this.dispatchEvent(new CustomEvent('line-item-deleted', {
+        bubbles: true,
+        composed: true,
+        detail: {
+          invoiceId: this.invoice[0].invoice_id,
+          itemId
+        }
+      }));
+    } catch (error) {
+      console.error('Error deleting line item:', error);
+    } finally {
+      this.loading = false;
+    }
+  }
+
   renderStatusSection() {
     if (this.isEditingStatus) {
       return html`
@@ -78,6 +102,38 @@ class InvoiceDetails extends TailwindElement() {
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
           </svg>
         </button>
+      </div>
+    `;
+  }
+
+  renderLineItem(item) {
+    return html`
+      <div class="bg-gray-50 rounded-lg p-4">
+        <div class="grid grid-cols-2 gap-4">
+          <div class="col-span-2 flex justify-between items-start">
+            <div>
+              <p class="text-sm font-medium text-gray-900">Description</p>
+              <p class="mt-1 text-sm text-gray-500">${item.description}</p>
+            </div>
+            <button 
+              @click=${() => this.deleteLineItem(item.id)}
+              class="text-red-600 hover:text-red-900"
+            >
+              <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                  d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+              </svg>
+            </button>
+          </div>
+          <div>
+            <p class="text-sm font-medium text-gray-900">Quantity</p>
+            <p class="mt-1 text-sm text-gray-500">${item.quantity}</p>
+          </div>
+          <div>
+            <p class="text-sm font-medium text-gray-900">Total</p>
+            <p class="mt-1 text-sm text-gray-500">$${item.total}</p>
+          </div>
+        </div>
       </div>
     `;
   }
@@ -172,24 +228,7 @@ class InvoiceDetails extends TailwindElement() {
           <div class="border-t border-gray-200 pt-6">
             <h4 class="font-medium text-gray-900 mb-4">Line Items</h4>
             <div class="space-y-4">
-              ${this.invoice.map(item => html`
-                <div class="bg-gray-50 rounded-lg p-4">
-                  <div class="grid grid-cols-2 gap-4">
-                    <div class="col-span-2">
-                      <p class="text-sm font-medium text-gray-900">Description</p>
-                      <p class="mt-1 text-sm text-gray-500">${item.description}</p>
-                    </div>
-                    <div>
-                      <p class="text-sm font-medium text-gray-900">Quantity</p>
-                      <p class="mt-1 text-sm text-gray-500">${item.quantity}</p>
-                    </div>
-                    <div>
-                      <p class="text-sm font-medium text-gray-900">Total</p>
-                      <p class="mt-1 text-sm text-gray-500">$${item.total}</p>
-                    </div>
-                  </div>
-                </div>
-              `)}
+              ${this.invoice.map(item => this.renderLineItem(item))}
             </div>
           </div>
         ` : html`
