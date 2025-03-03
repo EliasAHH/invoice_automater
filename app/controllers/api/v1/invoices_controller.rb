@@ -26,6 +26,16 @@ module Api
             render json: { error: e.message }, status: :unprocessable_entity
         end 
 
+        def update 
+            @invoice = Invoice.find(params[:invoice][:id])
+            binding.break
+            if @invoice.update(status: params[:invoice][:status])
+                render json: @invoice, status: :ok
+            else
+                render json: @invoice.errors, status: :unprocessable_entity
+            end
+        end 
+
         def show
             @invoice = Invoice.find(params[:id])
             render json: @invoice.line_items_hash

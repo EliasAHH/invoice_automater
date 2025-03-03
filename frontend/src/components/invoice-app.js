@@ -52,12 +52,12 @@ class InvoiceApp extends TailwindElement() {
                     <div class="flex justify-between">
                         <button 
                             @click=${() => this.view = 'list'}
-                            class="px-4 py-2 ${this.view === 'list' ? 'bg-blue-500' : 'bg-red-200'} text-white rounded hover:bg-blue-600">
+                            class="px-4 py-2 ${this.view === 'list' ? 'bg-blue-500' : 'bg-gray-200'} text-white rounded hover:bg-blue-600">
                             List Invoices
                         </button>
                         <button 
                             @click=${() => this.view = 'form'}
-                            class="px-4 py-2 ${this.view === 'form' ? 'bg-green-500' : 'bg-red-200'} text-white rounded hover:bg-green-600">
+                            class="px-4 py-2 ${this.view === 'form' ? 'bg-green-500' : 'bg-gray-200'} text-white rounded hover:bg-green-600">
                             Create Invoice
                         </button>
                     </div>
@@ -76,7 +76,10 @@ class InvoiceApp extends TailwindElement() {
 
         return html`
             ${this.view === 'list' 
-                ? html`<invoice-list .invoices="${this.invoices || []}"></invoice-list>`
+                ? html`<invoice-list 
+                    .invoices="${this.invoices || []}"
+                    @invoice-updated=${() => this.handleInvoiceUpdate()}
+                  ></invoice-list>`
                 : html`<invoice-form @save-invoice=${this.handleSave}></invoice-form>`
             }
         `;
@@ -97,6 +100,10 @@ class InvoiceApp extends TailwindElement() {
 
     handleEdit(e) {
         this.view = 'form';
+    }
+
+    async handleInvoiceUpdate() {
+        await this.loadInvoices();
     }
 }
 

@@ -32,8 +32,8 @@ export const InvoiceService = {
         }
     },
 
-    async updateInvoice(id, invoice) {
-        const response = await fetch(`${BASE_URL}/invoices/${id}`, {
+    async updateInvoice(invoice) {
+        const response = await fetch(`${BASE_URL}/invoices/${invoice.id}`, {
             method: 'PATCH',
             headers: {
                 'Content-Type': 'application/json',

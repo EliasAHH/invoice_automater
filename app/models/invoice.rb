@@ -39,6 +39,7 @@ class Invoice < ApplicationRecord
         self.line_items.map do |item|
             {
                 id: item.id,
+                invoice_id: item.invoice_id,
                 description: item.description,
                 quantity: item.quantity,
                 total: item.total,
@@ -46,6 +47,7 @@ class Invoice < ApplicationRecord
                 status: item.invoice.status,
                 date: item.invoice.date,
                 invoice_number: item.invoice.invoice_number,
+                notes: item.invoice.notes
             }
         end 
     end 

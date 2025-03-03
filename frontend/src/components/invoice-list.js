@@ -17,6 +17,35 @@ class InvoiceList extends TailwindElement() {
     this.invoices = [];
     this.selectedInvoice = null;
     this.isDetailsOpen = false;
+    
+    // Bind the method to this instance
+    this.handleStatusUpdate = this.handleStatusUpdate.bind(this);
+  }
+
+  connectedCallback() {
+    super.connectedCallback();
+    this.addEventListener('status-updated', this.handleStatusUpdate);
+  }
+
+  disconnectedCallback() {
+    super.disconnectedCallback();
+    this.removeEventListener('status-updated', this.handleStatusUpdate);
+  }
+
+  handleStatusUpdate(e) {
+    const { invoiceId, newStatus } = e.detail;
+    // Update the status in the list
+    this.invoices = this.invoices.map(invoice => 
+      invoice.id === invoiceId 
+        ? { ...invoice, status: newStatus }
+        : invoice
+    );
+    
+    // Dispatch event to parent for global refresh
+    this.dispatchEvent(new CustomEvent('invoice-updated', {
+      bubbles: true,
+      composed: true
+    }));
   }
 
   async showInvoiceDetails(invoice) {

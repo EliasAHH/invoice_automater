@@ -25,7 +25,7 @@ class InvoiceForm extends TailwindElement() {
     return {
       description: '',
       quantity: 1,
-      unit_price: 0
+      Price: 0
     };
   }
 
@@ -50,6 +50,15 @@ class InvoiceForm extends TailwindElement() {
                   .value=${this.invoice.date}
                   @input=${e => this.updateInvoice('date', e.target.value)}
                   class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+              </div>
+              <div class="col-span-2">
+                <label class="block text-sm font-medium text-gray-700">Notes</label>
+                <textarea
+                  .value=${this.invoice.notes || ''}
+                  @input=${e => this.updateInvoice('notes', e.target.value)}
+                  rows="3"
+                  class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
+                  placeholder="Add any additional notes here..."></textarea>
               </div>
             </div>
           </div>
@@ -145,18 +154,7 @@ class InvoiceForm extends TailwindElement() {
 
   async handleSubmit(e) {
     e.preventDefault();
-    const url = 'http://localhost:3000/api/v1/invoices';
-    const method = this.isEditing ? 'PATCH' : 'POST';
-    const path = this.isEditing ? `${url}/${this.invoice.id}` : url;
-
-    try {
-      const response = await fetch(path, {
-        method,
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ invoice: this.invoice })
-      });
+    const response = this.editing ?  await InvoiceService.updateInvoice(this.invoice) : await InvoiceService.createInvoice(this.invoice)
 
       if (response.ok) {
         this.dispatchEvent(new CustomEvent('save-invoice', {
@@ -167,8 +165,6 @@ class InvoiceForm extends TailwindElement() {
     } catch (error) {
       console.error('Error saving invoice:', error);
     }
-  }
-
 }
 
 customElements.define('invoice-form', InvoiceForm);

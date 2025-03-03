@@ -1,12 +1,14 @@
 import { html } from 'lit';
 import { TailwindElement } from '../shared/tailwind.element';
+import { InvoiceService } from '../services/api';
 
 class InvoiceDetails extends TailwindElement() {
   static get properties() {
     return {
       invoice: { type: Object },
       isOpen: { type: Boolean },
-      loading: { type: Boolean }
+      loading: { type: Boolean },
+      isEditingStatus: { type: Boolean }
     };
   }
 
@@ -15,6 +17,69 @@ class InvoiceDetails extends TailwindElement() {
     this.invoice = null;
     this.isOpen = false;
     this.loading = false;
+    this.isEditingStatus = false;
+    this.statusOptions = ['draft', 'sent', 'paid', 'overdue'];
+  }
+
+  async updateStatus(newStatus) {
+    try {
+      this.loading = true;
+      await InvoiceService.updateInvoice({
+        id: this.invoice[0].invoice_id,
+        status: newStatus
+      });
+      this.invoice[0].status = newStatus;
+      this.isEditingStatus = false;
+      
+      // Dispatch custom event for status update
+      this.dispatchEvent(new CustomEvent('status-updated', {
+        bubbles: true,
+        composed: true,
+        detail: {
+          invoiceId: this.invoice[0].invoice_id,
+          newStatus: newStatus
+        }
+      }));
+    } catch (error) {
+      console.error('Error updating status:', error);
+    } finally {
+      this.loading = false;
+    }
+  }
+
+  renderStatusSection() {
+    if (this.isEditingStatus) {
+      return html`
+        <div class="relative">
+          <select
+            @change=${(e) => this.updateStatus(e.target.value)}
+            class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
+          >
+            ${this.statusOptions.map(status => html`
+              <option value=${status} ?selected=${status === this.invoice[0].status}>
+                ${status.charAt(0).toUpperCase() + status.slice(1)}
+              </option>
+            `)}
+          </select>
+        </div>
+      `;
+    }
+
+    return html`
+      <div class="flex items-center space-x-2">
+        <span class="inline-flex rounded-full px-2 text-xs font-semibold ${this.getStatusColor(this.invoice[0].status)}">
+          ${this.invoice[0].status}
+        </span>
+        <button
+          @click=${() => this.isEditingStatus = true}
+          class="text-indigo-600 hover:text-indigo-900"
+        >
+          <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
+          </svg>
+        </button>
+      </div>
+    `;
   }
 
   updated(changedProperties) {
@@ -89,12 +154,17 @@ class InvoiceDetails extends TailwindElement() {
             </div>
             <div>
               <p class="text-sm font-medium text-gray-500">Status</p>
-              <span class="mt-1 inline-flex rounded-full px-2 text-xs font-semibold
-                ${this.getStatusColor(this.invoice[0].status)}">
-                ${this.invoice[0].status}
-              </span>
+              ${this.renderStatusSection()}
             </div>
           </div>
+          
+          <!-- Notes Section -->
+          ${this.invoice[0].notes ? html`
+            <div class="mt-4 bg-gray-50 rounded-lg p-4">
+              <h4 class="text-sm font-medium text-gray-900 mb-2">Notes</h4>
+              <p class="text-sm text-gray-500">${this.invoice[0].notes}</p>
+            </div>
+          ` : ''}
         </div>
 
         <!-- Line Items -->
