@@ -20,7 +20,36 @@ class Invoice < ApplicationRecord
     def calculate_total
         self.subtotal = line_items.sum { |item| item.quantity * item.unit_price }
         self.total = (self.tax == 0.0 ? 1.08 : self.tax) * subtotal
+    end
+
+    def self.custom_hash
+        self.all.map do |invoice|
+            {
+                id: invoice.id,
+                invoice_number: invoice.invoice_number,
+                customer_name: invoice.customer.name,
+                date: invoice.date,
+                status: invoice.status,
+            }
+        end 
     end 
+
+
+    def line_items_hash
+        self.line_items.map do |item|
+            {
+                id: item.id,
+                description: item.description,
+                quantity: item.quantity,
+                total: item.total,
+                customer_name: item.invoice.customer.name,
+                status: item.invoice.status,
+                date: item.invoice.date,
+                invoice_number: item.invoice.invoice_number,
+            }
+        end 
+    end 
+
 
 
     private 
@@ -31,6 +60,5 @@ class Invoice < ApplicationRecord
         next_sequence = (last_sequence + 1).to_s.rjust(6, '0')
         self.invoice_number = "INV-#{next_sequence}"
     end 
-
 
 end

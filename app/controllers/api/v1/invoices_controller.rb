@@ -2,8 +2,8 @@ module Api
   module V1
     class InvoicesController < ApplicationController
         def index
-            @invoices = Invoice.all
-            render json: {invoices: @invoices, line_items: @invoices.line_items}
+            @invoices = Invoice.custom_hash
+            render json: @invoices
         end 
 
         def create
@@ -25,6 +25,11 @@ module Api
         rescue ActiveRecord::RecordInvalid => e
             render json: { error: e.message }, status: :unprocessable_entity
         end 
+
+        def show
+            @invoice = Invoice.find(params[:id])
+            render json: @invoice.line_items_hash
+        end
 
         private 
 
